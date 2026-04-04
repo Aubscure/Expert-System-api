@@ -18,8 +18,8 @@ class AdminSeeder extends Seeder
         if (Admin::count() === 0) {
             Admin::create([
                 'name'     => 'System Administrator',
-                'email'    => env('ADMIN_EMAIL'),   // set in .env, never hardcoded
-                'password' => Hash::make(env('ADMIN_PASSWORD')), // strong random password
+                'email'    => env('ADMIN_EMAIL'),
+                'password' => Hash::make(env('ADMIN_PASSWORD')),
             ]);
         }
     }
