@@ -82,6 +82,14 @@ Route::middleware(['auth:sanctum', 'abilities:expert'])
 
         // Results (anonymized — expert sees scores but no identity)
         Route::get('/questionnaires/{questionnaireId}/results', [ResultController::class, 'index']);
+
+        Route::get('/me', function () {
+            return response()->json([
+                'id'   => auth()->id(),
+                'name' => auth()->user()->name,
+                'role' => 'expert',
+            ]);
+        });
     });
 
 // ── Admin routes ───────────────────────────────────────────────────────────────
@@ -99,4 +107,28 @@ Route::middleware(['auth:sanctum', 'abilities:admin'])
         Route::get('/invitations',        [InvitationController::class, 'index']);
         Route::post('/invitations',       [InvitationController::class, 'store']);
         Route::delete('/invitations/{id}',[InvitationController::class, 'destroy']);
+
+        Route::get('/me', function () {
+            return response()->json([
+                'id'   => auth()->id(),
+                'name' => auth()->user()->name,
+                'role' => 'admin',
+            ]);
+        });
     });
+
+
+
+Route::middleware('auth:sanctum')->get('/me', function () {
+    $user = auth()->user();
+
+    // Determine role by checking which model authenticated
+    // Admin model = admin role, anything else = expert
+    $role = $user instanceof \App\Models\Admin ? 'admin' : 'expert';
+
+    return response()->json([
+        'id'   => $user->id,
+        'name' => $user->name,
+        'role' => $role,
+    ]);
+});
