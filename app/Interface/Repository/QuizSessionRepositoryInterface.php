@@ -12,7 +12,7 @@ interface QuizSessionRepositoryInterface
     public function saveResponses(int $sessionId, array $responses): void;
 
     // Mark session complete and write computed results
-    public function complete(string $uuid, int $totalScore, int $severityLevelId, ?string $aiAnalysis): object;
+    public function complete(string $uuid, int $totalScore, ?int $severityLevelId, ?string $aiAnalysis): object;
 
     // Clear essay text after AI has processed it (privacy)
     public function clearEssayText(int $sessionId): void;

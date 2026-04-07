@@ -31,6 +31,7 @@ return new class extends Migration
             $table->string('ai_analysis', 2000)->nullable();
             $table->timestamps();
 
+
             $table->index('uuid');
             $table->index(['questionnaire_id', 'completed_at']); // for admin stats
         });

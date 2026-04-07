@@ -28,28 +28,34 @@ class QuizSessionRepository implements QuizSessionRepositoryInterface
 
     public function saveResponses(int $sessionId, array $responses): void
     {
-        // Bulk insert in a single transaction — avoid N+1 writes
         DB::transaction(function () use ($sessionId, $responses) {
             foreach ($responses as $response) {
+                // Essay row has no question_id — store on session, not as a response
+                if (($response['question_id'] ?? null) === null) {
+                    QuizSession::where('id', $sessionId)->update([
+                        'essay_text' => $response['essay_text'] ?? null,
+                    ]);
+                    continue;
+                }
+
                 QuizResponse::updateOrCreate(
-                    // Unique key: one response per question per session
                     ['quiz_session_id' => $sessionId, 'question_id' => $response['question_id']],
                     [
                         'choice_id'  => $response['choice_id']  ?? null,
-                        'essay_text' => $response['essay_text'] ?? null,
+                        'essay_text' => null, // choices never carry essay text
                     ]
                 );
             }
         });
     }
 
-    public function complete(string $uuid, int $totalScore, int $severityLevelId, ?string $aiAnalysis): object
+    public function complete(string $uuid, int $totalScore, ?int $severityLevelId, ?string $aiAnalysis): object
     {
         $session = QuizSession::where('uuid', $uuid)->firstOrFail();
 
         DB::transaction(function () use ($session, $totalScore, $severityLevelId, $aiAnalysis) {
             $session->total_score       = $totalScore;
-            $session->severity_level_id = $severityLevelId;
+            $session->severity_level_id = $severityLevelId; // nullable in the DB already
             $session->ai_analysis       = $aiAnalysis;
             $session->completed_at      = now();
             $session->save();
@@ -60,10 +66,7 @@ class QuizSessionRepository implements QuizSessionRepositoryInterface
 
     public function clearEssayText(int $sessionId): void
     {
-        // Privacy: essay text is personal — delete it once AI has consumed it
-        QuizResponse::where('quiz_session_id', $sessionId)
-            ->whereNotNull('essay_text')
-            ->update(['essay_text' => null]);
+        QuizSession::where('id', $sessionId)->update(['essay_text' => null]);
     }
 
     public function getCompletedForQuestionnaire(int $questionnaireId)

@@ -14,15 +14,14 @@ return Application::configure(basePath: dirname(__DIR__))
         commands: __DIR__.'/../routes/console.php',
         health: '/up',
     )
-    ->withMiddleware(function (Middleware $middleware): void {
-        $middleware->encryptCookies(except: ['appearance', 'sidebar_state']);
-
-        $middleware->web(append: [
-            HandleAppearance::class,
-            HandleInertiaRequests::class,
-            AddLinkHeadersForPreloadedAssets::class,
+    ->withMiddleware(function (Middleware $middleware) {
+        // Register Sanctum ability middleware aliases
+        // Without this, 'abilities:admin' throws BindingResolutionException
+        $middleware->alias([
+            'abilities' => \Laravel\Sanctum\Http\Middleware\CheckAbilities::class,
+            'ability'   => \Laravel\Sanctum\Http\Middleware\CheckForAnyAbility::class,
         ]);
     })
-    ->withExceptions(function (Exceptions $exceptions): void {
+    ->withExceptions(function (Exceptions $exceptions) {
         //
     })->create();

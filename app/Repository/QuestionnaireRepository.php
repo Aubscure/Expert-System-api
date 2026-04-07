@@ -28,6 +28,7 @@ class QuestionnaireRepository implements QuestionnaireRepositoryInterface
                 // score_value is intentionally excluded from public response
                 // the frontend never sees point values — prevents gaming
             ])
+            ->withCount('questions')
             ->select('id', 'title', 'description', 'has_essay_question', 'essay_prompt')
             ->findOrFail($id);
     }

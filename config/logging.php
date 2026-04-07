@@ -59,10 +59,14 @@ return [
         ],
 
         'single' => [
-            'driver' => 'single',
-            'path' => storage_path('logs/laravel.log'),
-            'level' => env('LOG_LEVEL', 'debug'),
-            'replace_placeholders' => true,
+            'driver'    => 'single',
+            'path'      => storage_path('logs/laravel.log'),
+            'level'     => env('LOG_LEVEL', 'debug'),
+            'formatter' => Monolog\Formatter\LineFormatter::class,
+            'formatter_with' => [
+                'allowInlineLineBreaks' => true,
+                'ignoreEmptyContextAndExtra' => true,
+            ],
         ],
 
         'daily' => [

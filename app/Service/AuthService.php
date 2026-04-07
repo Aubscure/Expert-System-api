@@ -54,6 +54,23 @@ class AuthService implements AuthServiceInterface
         ], 200);
     }
 
+    public function validateInvitation(object $data): JsonResponse
+    {
+        $invitation = $this->invitationRepository->findByToken($data->token);
+
+        if (! $invitation || ! $invitation->isValid()) {
+            return response()->json([
+                'valid' => false,
+                'email' => null,
+            ], 200);
+        }
+
+        return response()->json([
+            'valid' => true,
+            'email' => $invitation->email,
+        ], 200);
+    }
+
     public function registerExpert(object $data): JsonResponse
     {
         // Validate the invitation token — double-checked here (was also checked in FormRequest)

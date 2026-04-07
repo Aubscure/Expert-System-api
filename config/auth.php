@@ -36,21 +36,22 @@ return [
     | Supported: "session"
     |
     */
-
-    'guards' => [
-        'web' => [
-            'driver'   => 'session',
-            'provider' => 'users',
-        ],
-        'admin' => [
-            'driver'   => 'sanctum',
-            'provider' => 'admins',
-        ],
-        'expert' => [
-            'driver'   => 'sanctum',
-            'provider' => 'experts',
-        ],
+'guards' => [
+    'web' => [
+        'driver'   => 'session',
+        'provider' => 'users',
     ],
+    // These use session driver — Sanctum authenticates via token lookup
+    // NOT by driver name — Sanctum intercepts at middleware level
+    'admin' => [
+        'driver'   => 'session',
+        'provider' => 'admins',
+    ],
+    'expert' => [
+        'driver'   => 'session',
+        'provider' => 'experts',
+    ],
+],
 
     /*
     |--------------------------------------------------------------------------
@@ -69,10 +70,11 @@ return [
     |
     */
 
-    'providers' => [
-        'admins'  => ['driver' => 'eloquent', 'model' => App\Models\Admin::class],
-        'experts' => ['driver' => 'eloquent', 'model' => App\Models\Expert::class],
-    ],
+'providers' => [
+    'users'   => ['driver' => 'eloquent', 'model' => App\Models\User::class],
+    'admins'  => ['driver' => 'eloquent', 'model' => App\Models\Admin::class],
+    'experts' => ['driver' => 'eloquent', 'model' => App\Models\Expert::class],
+],
 
     /*
     |--------------------------------------------------------------------------

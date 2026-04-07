@@ -5,7 +5,7 @@ namespace App\Http\Resources;
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\JsonResource;
 
-class QuestionnaireListResource extends JsonResource
+class QuestionnairePublicListResource extends JsonResource
 {
     public function toArray($request): array
     {
@@ -13,11 +13,8 @@ class QuestionnaireListResource extends JsonResource
             'id'                        => $this->id,
             'title'                     => $this->title,
             'description'               => $this->description,
-            'status'                    => $this->status,
-            'is_visible'                => $this->is_visible,
             'has_essay_question'        => $this->has_essay_question,
             'questions_count'           => $this->questions_count,
-            'completed_sessions_count'  => $this->completed_sessions_count ?? 0,
             'created_at'                => $this->created_at,
         ];
     }

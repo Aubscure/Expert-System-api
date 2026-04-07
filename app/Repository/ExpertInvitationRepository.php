@@ -8,12 +8,8 @@ use Illuminate\Support\Str;
 
 class ExpertInvitationRepository implements ExpertInvitationRepositoryInterface
 {
-    public function getAll()
-    {
-        return ExpertInvitation::select('id', 'token', 'email', 'created_by', 'expires_at', 'used_at', 'created_at')
-            ->with('creator:id,name')
-            ->orderByDesc('created_at')
-            ->paginate(20);
+    public function getAll() {
+        return ExpertInvitation::paginate(20);
     }
 
     public function findByToken(string $token)

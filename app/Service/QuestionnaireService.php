@@ -3,6 +3,7 @@
 namespace App\Service;
 
 use App\Http\Resources\QuestionnaireListResource;
+use App\Http\Resources\QuestionnairePublicListResource;
 use App\Http\Resources\QuestionnaireDetailResource;
 use App\Interface\Repository\QuestionnaireRepositoryInterface;
 use App\Interface\Service\QuestionnaireServiceInterface;
@@ -19,7 +20,7 @@ class QuestionnaireService implements QuestionnaireServiceInterface
     public function getAllPublic(): JsonResponse
     {
         $questionnaires = $this->questionnaireRepository->getAllPublic();
-        return response()->json(QuestionnaireListResource::collection($questionnaires));
+        return response()->json(QuestionnairePublicListResource::collection($questionnaires));
     }
 
     public function getPublicById(int $id): JsonResponse

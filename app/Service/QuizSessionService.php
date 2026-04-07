@@ -78,18 +78,18 @@ class QuizSessionService implements QuizSessionServiceInterface
         }
 
         // ── AI analysis (optional — gracefully degrades if essay was skipped) ──
-        $essayResponse = $session->responses->firstWhere('choice_id', null);
-        $aiAnalysis    = null;
+        $essayText = $session->essay_text;
+        $aiAnalysis = null;
 
-        if ($essayResponse && ! empty($essayResponse->essay_text)) {
+        if (! empty($essayText)) {
             $aiAnalysis = $this->aiService->analyze(
                 score:         $totalScore,
                 maxScore:      $session->responses->filter(fn ($r) => ! is_null($r->choice))->count() * 3, // approximate max
                 severityLabel: $severityLevel?->label ?? 'Unknown',
-                essayText:     $essayResponse->essay_text,
+                essayText:     $essayText,
             );
 
-            // Privacy: clear the essay from the database after AI has consumed it
+            // Privacy: clear the essay from the session record after AI has consumed it
             $this->sessionRepository->clearEssayText($session->id);
         }
 
